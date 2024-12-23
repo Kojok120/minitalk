@@ -6,21 +6,22 @@
 /*   By: kokamoto <kokamoto@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 19:38:11 by kokamoto          #+#    #+#             */
-/*   Updated: 2024/12/23 22:08:44 by kokamoto         ###   ########.fr       */
+/*   Updated: 2024/12/23 23:11:44 by kokamoto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <limits.h>
-#include <unistd.h>
 #include <signal.h>
+#include <unistd.h>
 #define MAX_STR_LENGTH 10000000
 
 static void	sig_handler(int sig)
 {
-	static char	buf[MAX_STR_LENGTH] = {'\0', };
 	static int	bit = 7;
 	static int	i = 0;
-
+	static unsigned char buf[MAX_STR_LENGTH] = {
+		'\0',
+	};
 	if (sig == SIGUSR1)
 		buf[i] |= (1 << bit);
 	if (sig == SIGUSR2)
@@ -70,30 +71,30 @@ void	ft_putint_fd(int n, int fd)
 	}
 }
 
-int main(void)
+int	main(void)
 {
-    pid_t pid;
-    struct sigaction act;
+	pid_t pid;
+	struct sigaction act;
 
-    // sigaction構造体の初期化
-    act.sa_handler = sig_handler;     // シグナルハンドラの設定
-    sigemptyset(&act.sa_mask);        // シグナルマスクの初期化
-    act.sa_flags = 0;                 // フラグの設定
+	// sigaction構造体の初期化
+	act.sa_handler = sig_handler; // シグナルハンドラの設定
+	sigemptyset(&act.sa_mask);    // シグナルマスクの初期化
+	act.sa_flags = 0;             // フラグの設定
 
-    pid = getpid();
-    ft_putint_fd(pid, 1);
-    write(1, "\n", 1);
+	pid = getpid();
+	ft_putint_fd(pid, 1);
+	write(1, "\n", 1);
 
-    // シグナルハンドラの設定（ループの前に1回だけ）
-    if (sigaction(SIGUSR1, &act, NULL) == -1 || 
-        sigaction(SIGUSR2, &act, NULL) == -1)
-    {
-        return (1);    // エラーハンドリング
-    }
+	// シグナルハンドラの設定（ループの前に1回だけ）
+	if (sigaction(SIGUSR1, &act, NULL) == -1 || sigaction(SIGUSR2, &act,
+			NULL) == -1)
+	{
+		return (1); // エラーハンドリング
+	}
 
-    while (1)
-    {
-        pause();
-    }
-    return (0);
+	while (1)
+	{
+		pause();
+	}
+	return (0);
 }

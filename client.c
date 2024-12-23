@@ -6,16 +6,15 @@
 /*   By: kokamoto <kokamoto@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 19:37:59 by kokamoto          #+#    #+#             */
-/*   Updated: 2024/12/23 22:15:58 by kokamoto         ###   ########.fr       */
+/*   Updated: 2024/12/23 23:09:36 by kokamoto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include <limits.h>
-#include <unistd.h>
 #include <signal.h>
+#include <unistd.h>
 
-static void	send_char(pid_t pid, char c)
+static void	send_char(pid_t pid, unsigned char c)
 {
 	int	bit;
 
@@ -65,11 +64,11 @@ int	ft_atoi(const char *str)
 		i++;
 	while (str[i] >= '0' && str[i] <= '9')
 	{
-		if (sign * num > LONG_MAX / 10
-			|| (sign * num * 10 > LONG_MAX - (str[i] - '0')))
+		if (sign * num > LONG_MAX / 10 || (sign * num * 10 > LONG_MAX - (str[i]
+					- '0')))
 			return ((int)LONG_MAX);
-		if (sign * num < LONG_MIN / 10
-			|| (sign * num * 10 < LONG_MIN + (str[i] - '0')))
+		if (sign * num < LONG_MIN / 10 || (sign * num * 10 < LONG_MIN + (str[i]
+					- '0')))
 			return ((int)LONG_MIN);
 		num = num * 10 + str[i] - '0';
 		i++;
@@ -77,7 +76,7 @@ int	ft_atoi(const char *str)
 	return (sign * num);
 }
 
-int	main(int argc, char*argv[])
+int	main(int argc, char *argv[])
 {
 	pid_t	pid;
 	char	*str;
