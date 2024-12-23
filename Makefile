@@ -3,39 +3,45 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kokamoto <kojokamo120@gmail.com>           +#+  +:+       +#+         #
+#    By: kokamoto <kokamoto@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/24 19:38:15 by kokamoto          #+#    #+#              #
-#    Updated: 2024/11/24 19:46:13 by kokamoto         ###   ########.fr        #
+#    Updated: 2024/12/23 22:07:45 by kokamoto         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
-NAME = minitalk.a
+NAME_CLIENT = client
+NAME_SERVER = server
+
 CC = cc
-CFLAGS = -Wall -Werror -Wextra
-SRCDIR = .
-LIBDIR = libft
+CFLAGS = -Wall -Wextra -Werror
 
-SRC = $(SRCDIR)/client.c server.c
-LIB = $(LIBDIR)/libft.a
+SRCS_CLIENT = client.c
+SRCS_SERVER = server.c
 
-all: $(NAME)
+OBJS_CLIENT = $(SRCS_CLIENT:.c=.o)
+OBJS_SERVER = $(SRCS_SERVER:.c=.o)
 
-$(NAME): $(SRC) $(LIB)
-	$(CC) $(CFLAGS) -I $(LIBDIR) -c $(SRC)
-	ar rc $(NAME) client.o server.o $(LIBDIR)/*.o
+all: $(NAME_CLIENT) $(NAME_SERVER)
 
-$(LIB):
-	make -C $(LIBDIR)
+# ヘッダーファイルがある場合は依存関係を追加
+$(OBJS_CLIENT): %.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJS_SERVER): %.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(NAME_CLIENT): $(OBJS_CLIENT)
+	$(CC) $(CFLAGS) $(OBJS_CLIENT) -o $(NAME_CLIENT)
+
+$(NAME_SERVER): $(OBJS_SERVER)
+	$(CC) $(CFLAGS) $(OBJS_SERVER) -o $(NAME_SERVER)
 
 clean:
-	rm -f client.o server.o
-	make -C $(LIBDIR) fclean
+	rm -f $(OBJS_CLIENT) $(OBJS_SERVER)
 
 fclean: clean
-	rm -f $(NAME)
-	make -C $(LIBDIR) fclean
-
+	rm -f $(NAME_CLIENT) $(NAME_SERVER)
 
 re: fclean all
