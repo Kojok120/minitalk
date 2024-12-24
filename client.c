@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kokamoto <kokamoto@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kokamoto <kojokamo120@gmail.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 19:37:59 by kokamoto          #+#    #+#             */
-/*   Updated: 2024/12/23 23:09:36 by kokamoto         ###   ########.fr       */
+/*   Updated: 2024/12/24 18:14:49 by kokamoto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void	send_char(pid_t pid, unsigned char c)
 			kill(pid, SIGUSR2);
 		}
 		bit--;
-		usleep(50);
+		usleep(1000);
 	}
 }
 
@@ -81,10 +81,12 @@ int	main(int argc, char *argv[])
 	pid_t	pid;
 	char	*str;
 
-	if (argc < 3)
-	{
-		return (1);
-	}
+   if (argc != 3)
+   {
+       write(2, "Usage: ./client [server_pid] [string]\n", 37);
+       return (1);
+   }
+
 	pid = ft_atoi(argv[1]);
 	str = argv[2];
 	send_str(pid, str);
