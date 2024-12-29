@@ -6,7 +6,7 @@
 /*   By: kokamoto <kojokamo120@gmail.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 19:37:59 by kokamoto          #+#    #+#             */
-/*   Updated: 2024/12/24 18:14:49 by kokamoto         ###   ########.fr       */
+/*   Updated: 2024/12/25 15:31:09 by kokamoto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,19 @@
 #include <signal.h>
 #include <unistd.h>
 
-static void	send_char(pid_t pid, unsigned char c)
+static void send_char(pid_t pid, unsigned char c)
 {
-	int	bit;
+    int bit = 7;
 
-	bit = 7;
-	while (bit != -1)
-	{
-		if (c & (1 << bit))
-		{
-			kill(pid, SIGUSR1);
-		}
-		else
-		{
-			kill(pid, SIGUSR2);
-		}
-		bit--;
-		usleep(1000);
-	}
+    while (bit >= 0)
+    {
+        if (c & (1 << bit))
+            kill(pid, SIGUSR1);
+        else
+            kill(pid, SIGUSR2);
+        bit--;
+        usleep(1000);
+    }
 }
 
 static void	send_str(pid_t pid, char *str)
