@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kokamoto <kojokamo120@gmail.com>           +#+  +:+       +#+        */
+/*   By: kokamoto <kokamoto@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 19:37:59 by kokamoto          #+#    #+#             */
-/*   Updated: 2024/12/25 15:31:09 by kokamoto         ###   ########.fr       */
+/*   Updated: 2024/12/29 22:20:03 by kokamoto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,32 +14,55 @@
 #include <signal.h>
 #include <unistd.h>
 
-static void send_char(pid_t pid, unsigned char c)
+void send_char(pid_t pid, unsigned char *c, size_t len)
 {
-    int bit = 7;
-
-    while (bit >= 0)
+    size_t byte_index;
+    int bit;
+    
+    byte_index = 0;
+    while (byte_index < len)
     {
-        if (c & (1 << bit))
-            kill(pid, SIGUSR1);
-        else
-            kill(pid, SIGUSR2);
-        bit--;
-        usleep(1000);
+        bit = 7;
+        while (bit >= 0)
+        {
+            if (c[byte_index] & (1 << bit))
+                kill(pid, SIGUSR1);
+            else
+                kill(pid, SIGUSR2);
+            usleep(1000);
+            bit--;
+        }
+        byte_index++;
     }
 }
 
-static void	send_str(pid_t pid, char *str)
+void send_str(pid_t pid, char *str)
 {
-	int	i;
+    size_t i;
+    size_t len;
+    unsigned char *ustr;
 
 	i = 0;
-	while (str[i])
-	{
-		send_char(pid, str[i]);
-		i++;
-	}
-	send_char(pid, '\0');
+	ustr = (unsigned char *)str;
+    while (ustr[i])
+    {
+        if ((ustr[i] & 0x80) == 0)
+            len = 1;
+        else if ((ustr[i] & 0xE0) == 0xC0)
+            len = 2;
+        else if ((ustr[i] & 0xF0) == 0xE0)
+            len = 3;
+        else if ((ustr[i] & 0xF8) == 0xF0)
+            len = 4;
+        else
+        {
+            i++;
+            continue;
+        }
+        send_char(pid, &ustr[i], len);
+        i += len;
+    }
+    send_char(pid, '\0', 1);
 }
 
 int	ft_atoi(const char *str)
@@ -81,7 +104,6 @@ int	main(int argc, char *argv[])
        write(2, "Usage: ./client [server_pid] [string]\n", 37);
        return (1);
    }
-
 	pid = ft_atoi(argv[1]);
 	str = argv[2];
 	send_str(pid, str);

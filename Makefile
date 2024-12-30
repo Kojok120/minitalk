@@ -6,7 +6,7 @@
 #    By: kokamoto <kokamoto@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/24 19:38:15 by kokamoto          #+#    #+#              #
-#    Updated: 2024/12/23 22:07:45 by kokamoto         ###   ########.fr        #
+#    Updated: 2024/12/29 22:12:19 by kokamoto         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,6 @@ OBJS_SERVER = $(SRCS_SERVER:.c=.o)
 
 all: $(NAME_CLIENT) $(NAME_SERVER)
 
-# ヘッダーファイルがある場合は依存関係を追加
 $(OBJS_CLIENT): %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
